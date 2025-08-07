@@ -11,8 +11,13 @@ type UserData struct {
 	Name       string
 }
 
+type SenderData struct {
+	SenderName string
+	Content string
+}
+
 var (
-	channel  chan string
+	channel  chan SenderData
 	user      []UserData
 	Mutex     sync.Mutex
 	flag      int
@@ -44,12 +49,10 @@ func ConnectionCheck(listener net.Listener) {
 
 			user = NewUser(user, newuser, connection)
 
-		//fmt.Println(newuser)
-
 		}
-		//fmt.Println(user)
+
 		connection.Write([]byte("Correct Name"))
-		channel = make(chan string)
+		channel = make(chan SenderData)
 
 		go Sender(newuser)
 		go Receiver(newuser)

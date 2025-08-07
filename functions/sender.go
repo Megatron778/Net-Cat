@@ -6,7 +6,6 @@ import (
 )
 
 func Sender(newuser UserData) {
-
 	buffer := make([]byte, 1024)
 	for {
 		Tap := "\nWrite msg [" + newuser.Name + "] : "
@@ -20,9 +19,9 @@ func Sender(newuser UserData) {
 		fmt.Print("Client : ", data)
 
 		fmt.Println(newuser.Name)
+		Message := SenderData{newuser.Name, data}
 
-		channel <- data
+		channel <- Message
 		time.Sleep(100 * time.Millisecond)
 	}
-
 }

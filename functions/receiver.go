@@ -7,12 +7,12 @@ import (
 func Receiver(newuser UserData) {
 
 	for {
-		msg := <-channel
+		Message := <-channel
 		fmt.Println(newuser.Name)
 		for _,users := range user {
-			if users.Name != newuser.Name {
+			if users.Name != Message.SenderName {
 				
-				Tap := "\nReceive msg [" + newuser.Name + "] : " + msg + "\n send msg [" + users.Name + "] : "
+				Tap := "\nReceive msg [" + Message.SenderName + "] : " + Message.Content + "\nsend msg [" + users.Name + "] : "
 				users.Connection.Write([]byte(Tap))
 			}
 		}
