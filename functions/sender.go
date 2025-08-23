@@ -1,27 +1,31 @@
 package functions
 
 import (
-	"fmt"
 	"time"
 )
 
-func Sender(newuser UserData) {
-	buffer := make([]byte, 1024)
+// Enables the user to write messages.
+func Sender(NewUser UserData) {
 	for {
-		Tap := "\nWrite msg [" + newuser.Name + "] : "
-		newuser.Connection.Write([]byte(Tap))
-		n, err := newuser.Connection.Read(buffer)
+		Now := time.Now()
+		Format := Now.Format("2006-01-02 15:04:05")
+		Tap := "[" + Format + "][" + NewUser.Name + "]:"
+		NewUser.Connection.Write([]byte(Tap))
+		n, err := NewUser.Connection.Read(NewUser.Buffer)
 		if err != nil {
-			fmt.Println(err)
+			CloseConnection(NewUser)
 			return
 		}
-		data := string(buffer[:n])
-		fmt.Print("Client : ", data)
+		Message := string(NewUser.Buffer[:n])
+		if Message == "--name\n" {
+			ChangeName(&NewUser)
+			continue
+		}
+		History = append(History, "["+Format+"]["+NewUser.Name+"]:"+Message)
 
-		fmt.Println(newuser.Name)
-		Message := SenderData{newuser.Name, data}
+		Pack := SenderData{NewUser.Connection,NewUser.Name, Message}
 
-		channel <- Message
+		channel <- Pack
 		time.Sleep(100 * time.Millisecond)
 	}
 }
