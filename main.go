@@ -33,7 +33,6 @@ func main() {
 			return
 		}
 		defer Connection.Close()
-		
 		go functions.HandleConnection(Connection)
 	}
 	

@@ -16,7 +16,7 @@ func ValidateAndAddUser(NewUser UserData) bool {
 		return false
 	}
 	if !CorrectName(NewUser.Name) {
-		NewUser.Connection.Write([]byte("Please enter at least 3 characters.\n"))
+		NewUser.Connection.Write([]byte("Please enter at least 3 Latters.\n"))
 		return false
 	}
 	Mutex.Lock()

@@ -12,7 +12,6 @@ func OpenConnection(NewUser UserData) {
 			OtherUsers.Connection.Write([]byte(Tap))
 		}
 	}
-	History = append(History, NewUser.Name + " has joined our chat...\n")
 }
 
 // Notifies all clients that a user has left the chat and removes them from the list of active users.
@@ -26,7 +25,6 @@ func CloseConnection(NewUser UserData) {
 			OtherUsers.Connection.Write([]byte(Tap))
 		}
 	}
-	History = append(History, NewUser.Name + " has left our chat...\n")
 
 	var NewData []UserData
 

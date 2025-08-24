@@ -83,9 +83,10 @@ func HandleConnection(Connection net.Conn) {
 	}
 
 	Mutex.Lock()
-	for _, Msg := range History {
-		Connection.Write([]byte(Msg))
-	}
+		for _, Msg := range History {
+			Connection.Write([]byte(Msg))
+		}
+	
 	OpenConnection(NewUser)
 	Mutex.Unlock()
 
