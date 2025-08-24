@@ -20,7 +20,6 @@ type SenderData struct {
 }
 
 var (
-	channel chan SenderData
 	User    []UserData
 	Mutex   sync.Mutex
 	History []string
@@ -30,7 +29,9 @@ var (
 func HandleConnection(Connection net.Conn) {
 	var NewUser UserData
 	var flag int
-	channel = make(chan SenderData)
+
+	channel := make(chan SenderData)
+	
 	Welcome := "Welcome to TCP-Chat!\n" +
 		"         _nnnn_\n" +
 		"        dGGGGMMb\n" +
@@ -50,10 +51,12 @@ func HandleConnection(Connection net.Conn) {
 		"     `-'       `--'\n"
 	Connection.Write([]byte(Welcome))
 
+	Mutex.Lock()
 	if len(User) == 10 {
 		Connection.Write([]byte("The chat room is full."))
 		return
 	}
+	Mutex.Unlock()
 	Buffer := make([]byte, 1024)
 	
 	for flag == 0 {
@@ -70,17 +73,21 @@ func HandleConnection(Connection net.Conn) {
 			continue
 		}
 		flag = 1
+		Mutex.Lock()
 		User = append(User, NewUser)
+		Mutex.Unlock()
 
 	}
 
+	Mutex.Lock()
 	for _, Msg := range History {
 		Connection.Write([]byte(Msg))
 	}
 	
 	OpenConnection(NewUser)
+	Mutex.Unlock()
 
 
-	go Sender(NewUser)
-	go Receiver(NewUser)
+	go Sender(NewUser, channel)
+	go Receiver(NewUser, channel)
 }

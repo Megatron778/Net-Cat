@@ -5,7 +5,7 @@ import (
 )
 
 // Broadcasts the user's message to all connected clients except the sender.
-func Receiver(NewUser UserData) {
+func Receiver(NewUser UserData, channel chan SenderData) {
 
 	for {
 		Pack := <-channel

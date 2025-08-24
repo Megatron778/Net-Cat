@@ -17,6 +17,7 @@ func OpenConnection(NewUser UserData) {
 
 // Notifies all clients that a user has left the chat and removes them from the list of active users.
 func CloseConnection(NewUser UserData) {
+	Mutex.Lock()
 	for _, OtherUsers := range User {
 		if NewUser.Name != OtherUsers.Name {
 			Now := time.Now()
@@ -35,4 +36,5 @@ func CloseConnection(NewUser UserData) {
 		}
 	}
     User = NewData
+	Mutex.Unlock()
 }

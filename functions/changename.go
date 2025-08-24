@@ -25,6 +25,7 @@ func ChangeName(NewUser *UserData) {
 		}
 		flag2 = 1
 
+		Mutex.Lock()
 		for _, OtherUsers := range User {
 			if NewUser.Connection != OtherUsers.Connection {
 				Now := time.Now()
@@ -33,6 +34,7 @@ func ChangeName(NewUser *UserData) {
 			}
 		}
 		History = append(History, OldName+" changed his name to '"+NewUser.Name+"'\n")
+		Mutex.Unlock()
 	}
 
 }
