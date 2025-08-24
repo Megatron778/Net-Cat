@@ -30,7 +30,7 @@ func ChangeName(NewUser *UserData) {
 			if NewUser.Connection != OtherUsers.Connection {
 				Now := time.Now()
 				Format := Now.Format("2006-01-02 15:04:05")
-				OtherUsers.Connection.Write([]byte("\n" + OldName + " changed his name to ''" + NewUser.Name + "''\n[" + Format + "][" + OtherUsers.Name + "]:"))
+				OtherUsers.Connection.Write([]byte("\n" + OldName + " changed his name to '" + NewUser.Name + "'\n[" + Format + "][" + OtherUsers.Name + "]:"))
 			}
 		}
 		History = append(History, OldName+" changed his name to '"+NewUser.Name+"'\n")

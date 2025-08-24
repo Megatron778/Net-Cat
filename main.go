@@ -17,13 +17,14 @@ func main() {
 		port = os.Args[1]
 	} else if len(os.Args) != 1 {
 		fmt.Println("[USAGE]: ./TCPChat $port")
+		return
 	}
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Server listening on port", port)
+	fmt.Println("Server listening on port :", port)
 
 	for {
 		Connection, err := listener.Accept()

@@ -8,11 +8,11 @@ import (
 func ValidateAndAddUser(NewUser UserData) bool {
 
 	if len(NewUser.Name) == 0 {
-		NewUser.Connection.Write([]byte("Empty name, Please enter at least 3 characters.\n"))
+		NewUser.Connection.Write([]byte("Empty name, Please enter at least 3 Latters.\n"))
 		return false
 	}
 	if len(NewUser.Name) >= 15 {
-		NewUser.Connection.Write([]byte("Name is too long. Please enter less than 15 characters.\n"))
+		NewUser.Connection.Write([]byte("Name is too long. Please enter less than 15 Latters.\n"))
 		return false
 	}
 	if !CorrectName(NewUser.Name) {
@@ -20,13 +20,14 @@ func ValidateAndAddUser(NewUser UserData) bool {
 		return false
 	}
 	Mutex.Lock()
+	defer Mutex.Unlock()
 	for _, OtherUser := range User {
 		if NewUser.Name == OtherUser.Name {
 			NewUser.Connection.Write([]byte("This name already used.\n"))
 			return false
 		}
 	}
-	Mutex.Unlock()
+
 	return true
 }
 

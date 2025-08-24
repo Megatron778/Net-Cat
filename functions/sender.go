@@ -2,6 +2,7 @@ package functions
 
 import (
 	"time"
+	"strings"
 )
 
 // Enables the user to write messages.
@@ -17,6 +18,10 @@ func Sender(NewUser UserData, channel chan SenderData) {
 			return
 		}
 		Message := string(NewUser.Buffer[:n])
+
+		if strings.TrimSpace(Message) == "" {
+			continue
+		}
 		if Message == "--name\n" {
 			ChangeName(&NewUser)
 			continue
@@ -26,7 +31,7 @@ func Sender(NewUser UserData, channel chan SenderData) {
 		Mutex.Unlock()
 		
 
-		Pack := SenderData{NewUser.Connection,NewUser.Name, Message}
+		Pack := SenderData{NewUser.Connection, NewUser.Name, Message}
 
 		channel <- Pack
 		time.Sleep(100 * time.Millisecond)

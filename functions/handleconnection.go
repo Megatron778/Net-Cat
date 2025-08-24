@@ -50,13 +50,7 @@ func HandleConnection(Connection net.Conn) {
 		"\\____   )MMMMMP|   .'\n" +
 		"     `-'       `--'\n"
 	Connection.Write([]byte(Welcome))
-
-	Mutex.Lock()
-	if len(User) == 10 {
-		Connection.Write([]byte("The chat room is full."))
-		return
-	}
-	Mutex.Unlock()
+	
 	Buffer := make([]byte, 1024)
 	
 	for flag == 0 {
@@ -73,17 +67,25 @@ func HandleConnection(Connection net.Conn) {
 			continue
 		}
 		flag = 1
+		
+		Mutex.Lock()
+		if len(User) >= 10 {
+			Connection.Write([]byte("The chat room is full."))
+			Connection.Close()
+			Mutex.Unlock()
+			return
+		}
+		Mutex.Unlock()
+		
 		Mutex.Lock()
 		User = append(User, NewUser)
 		Mutex.Unlock()
-
 	}
 
 	Mutex.Lock()
 	for _, Msg := range History {
 		Connection.Write([]byte(Msg))
 	}
-	
 	OpenConnection(NewUser)
 	Mutex.Unlock()
 
