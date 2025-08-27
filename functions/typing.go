@@ -1,13 +1,12 @@
 package functions
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
 
 // Enables the user to write messages.
-func Sender(NewUser UserData, channel chan SenderData) {
+func Sender(NewUser UserData) {
 	
 	for {
 		Now := time.Now()
@@ -17,7 +16,6 @@ func Sender(NewUser UserData, channel chan SenderData) {
 		n, err := NewUser.Connection.Read(NewUser.Buffer)
 		if err != nil {
 			CloseConnection(NewUser)
-			fmt.Println("Error: ",err)
 			return
 		}
 		Message := strings.TrimSpace(string(NewUser.Buffer[:n]))
@@ -30,8 +28,18 @@ func Sender(NewUser UserData, channel chan SenderData) {
 		History = append(History, "["+Format+"]["+NewUser.Name+"]:"+Message + "\n")
 		Mutex.Unlock()
 
-		Pack := SenderData{NewUser.Connection, NewUser.Name, Message}
-
-		channel <- Pack
+		
+		
+		Mutex.Lock()
+		for _, users := range User {
+			if users.Connection != NewUser.Connection {
+				Now := time.Now()
+				Format := Now.Format("2006-01-02 15:04:05")
+				Tap := "\n[" + Format + "][" + NewUser.Name + "]:" + Message + "\n[" + Format + "][" + users.Name + "]:"
+				users.Connection.Write([]byte(Tap))
+			}
+		}
+		Mutex.Unlock()
+	
 	}
 }

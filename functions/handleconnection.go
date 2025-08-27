@@ -13,12 +13,6 @@ type UserData struct {
 	Buffer     []byte
 }
 
-type SenderData struct {
-	Connection net.Conn
-	SenderName string
-	Message    string
-}
-
 var (
 	User    []UserData
 	Mutex   sync.Mutex
@@ -29,8 +23,6 @@ var (
 func HandleConnection(Connection net.Conn) {
 	var NewUser UserData
 	var flag int
-
-	channel := make(chan SenderData)
 	
 	Welcome := "Welcome to TCP-Chat!\n" +
 		"         _nnnn_\n" +
@@ -91,6 +83,5 @@ func HandleConnection(Connection net.Conn) {
 	Mutex.Unlock()
 
 
-	go Sender(NewUser, channel)
-	go Receiver(NewUser, channel)
+	 Sender(NewUser)
 }
