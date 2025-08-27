@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"fmt"
 	"net"
 	"strings"
 	"sync"
@@ -17,12 +16,23 @@ var (
 	User    []UserData
 	Mutex   sync.Mutex
 	History []string
+	connect int
 )
 
 // This function verifies the connection and manages it.
 func HandleConnection(Connection net.Conn) {
 	var NewUser UserData
 	var flag int
+	
+	Mutex.Lock()
+	if connect == 3 {
+		Connection.Write([]byte("The chat room is full."))
+		Connection.Close()
+		Mutex.Unlock()
+		return
+	}
+	connect++
+	Mutex.Unlock()
 	
 	Welcome := "Welcome to TCP-Chat!\n" +
 		"         _nnnn_\n" +
@@ -42,15 +52,16 @@ func HandleConnection(Connection net.Conn) {
 		"\\____   )MMMMMP|   .'\n" +
 		"     `-'       `--'\n"
 	Connection.Write([]byte(Welcome))
-	
+
 	Buffer := make([]byte, 1024)
-	
+
 	for flag == 0 {
 		flag = 0
 		Connection.Write([]byte("[ENTER YOUR NAME]:"))
 		n2, err := Connection.Read(Buffer)
 		if err != nil {
-			fmt.Println(err)
+			connect--
+			Connection.Close()
 			return
 		}
 		UserName := strings.TrimSpace(string(Buffer[:n2-1]))
@@ -59,29 +70,19 @@ func HandleConnection(Connection net.Conn) {
 			continue
 		}
 		flag = 1
-		
-		Mutex.Lock()
-		if len(User) >= 10 {
-			Connection.Write([]byte("The chat room is full."))
-			Connection.Close()
-			Mutex.Unlock()
-			return
-		}
-		Mutex.Unlock()
-		
+
 		Mutex.Lock()
 		User = append(User, NewUser)
 		Mutex.Unlock()
 	}
 
 	Mutex.Lock()
-		for _, Msg := range History {
-			Connection.Write([]byte(Msg))
-		}
-	
+	for _, Msg := range History {
+		Connection.Write([]byte(Msg))
+	}
+
 	OpenConnection(NewUser)
 	Mutex.Unlock()
 
-
-	 Sender(NewUser)
+	Sender(NewUser)
 }

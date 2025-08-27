@@ -8,6 +8,7 @@ import (
 // Enables the user to write messages.
 func Sender(NewUser UserData) {
 	
+	defer CloseConnection(NewUser)
 	for {
 		Now := time.Now()
 		Format := Now.Format("2006-01-02 15:04:05")
@@ -15,7 +16,7 @@ func Sender(NewUser UserData) {
 		NewUser.Connection.Write([]byte(Tap))
 		n, err := NewUser.Connection.Read(NewUser.Buffer)
 		if err != nil {
-			CloseConnection(NewUser)
+			
 			return
 		}
 		Message := strings.TrimSpace(string(NewUser.Buffer[:n]))

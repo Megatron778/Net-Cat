@@ -1,6 +1,9 @@
 package functions
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Notifies all connected clients that a new user has joined the chat.
 func OpenConnection(NewUser UserData) {
@@ -33,6 +36,8 @@ func CloseConnection(NewUser UserData) {
 			NewData = append(NewData, OtherUsers)
 		}
 	}
-    User = NewData
+	User = NewData
+	connect--
+	fmt.Println(connect)
 	Mutex.Unlock()
 }
