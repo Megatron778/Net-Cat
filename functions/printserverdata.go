@@ -8,7 +8,7 @@ func ServerDataPrint(Server ServerData) {
 		fmt.Print("\033[A")
 		fmt.Print("\033[2K")
 	}
-	if Server.NumberOfConnection == 3 {
+	if Server.NumberOfConnection == 10 {
 		mode = "\033[33mFull\033[0m"
 	} else if Server.NumberOfConnection == 0 {
 		mode = "\033[31mIdle\033[0m"

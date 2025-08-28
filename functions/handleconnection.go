@@ -31,7 +31,7 @@ func HandleConnection(Connection net.Conn) {
 	var flag int
 	
 	Mutex.Lock()
-	if Server.NumberOfConnection == 3 {
+	if Server.NumberOfConnection == 10 {
 		Connection.Write([]byte("The chat room is full."))
 		Connection.Close()
 		Mutex.Unlock()
