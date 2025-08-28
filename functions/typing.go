@@ -27,16 +27,17 @@ func Sender(NewUser UserData) {
 
 		Mutex.Lock()
 		History = append(History, "["+Format+"]["+NewUser.Name+"]:"+Message + "\n")
+		Server.MessageNumber = len(History)
+		Server.action = NewUser.Name + " Send a Message"
+		ServerDataPrint(Server)
 		Mutex.Unlock()
-
-		
 		
 		Mutex.Lock()
 		for _, users := range User {
 			if users.Connection != NewUser.Connection {
 				Now := time.Now()
 				Format := Now.Format("2006-01-02 15:04:05")
-				Tap := "\n[" + Format + "][" + NewUser.Name + "]:" + Message + "\n[" + Format + "][" + users.Name + "]:"
+				Tap := "\n" + Format + "][" + NewUser.Name + "]:" + Message + "\n[" + Format + "][" + users.Name + "]:"
 				users.Connection.Write([]byte(Tap))
 			}
 		}

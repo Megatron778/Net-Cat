@@ -12,11 +12,17 @@ type UserData struct {
 	Buffer     []byte
 }
 
+type ServerData struct {
+	NumberOfConnection int
+	MessageNumber int
+	action string
+}
+
 var (
 	User    []UserData
+	Server  ServerData
 	Mutex   sync.Mutex
 	History []string
-	connect int
 )
 
 // This function verifies the connection and manages it.
@@ -25,16 +31,20 @@ func HandleConnection(Connection net.Conn) {
 	var flag int
 	
 	Mutex.Lock()
-	if connect == 3 {
+	if Server.NumberOfConnection == 3 {
 		Connection.Write([]byte("The chat room is full."))
 		Connection.Close()
 		Mutex.Unlock()
 		return
 	}
-	connect++
-	Mutex.Unlock()
 	
-	Welcome := "Welcome to TCP-Chat!\n" +
+	Server.NumberOfConnection++
+	ServerDataPrint(Server)
+	Mutex.Unlock()
+
+
+	
+	Welcome := "\033[33mWelcome to TCP-Chat!\n" +
 		"         _nnnn_\n" +
 		"        dGGGGMMb\n" +
 		"       @p~qp~~qMb\n" +
@@ -50,7 +60,7 @@ func HandleConnection(Connection net.Conn) {
 		" |    `.       | `' \\Zq\n" +
 		"_)      \\.___.,|     .'\n" +
 		"\\____   )MMMMMP|   .'\n" +
-		"     `-'       `--'\n"
+		"     `-'       `--'\033[0m\n"
 	Connection.Write([]byte(Welcome))
 
 	Buffer := make([]byte, 1024)
@@ -60,7 +70,8 @@ func HandleConnection(Connection net.Conn) {
 		Connection.Write([]byte("[ENTER YOUR NAME]:"))
 		n2, err := Connection.Read(Buffer)
 		if err != nil {
-			connect--
+			Server.NumberOfConnection--
+			ServerDataPrint(Server)
 			Connection.Close()
 			return
 		}
@@ -78,7 +89,7 @@ func HandleConnection(Connection net.Conn) {
 
 	Mutex.Lock()
 	for _, Msg := range History {
-		Connection.Write([]byte(Msg))
+		Connection.Write([]byte("\033[30m"+Msg+"\033[0m"))
 	}
 
 	OpenConnection(NewUser)

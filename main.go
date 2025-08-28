@@ -24,8 +24,12 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Server listening on port :", port)
 
+	fmt.Println("\033[37mServer listening on port :\033[0m", port)
+	fmt.Println("\033[37m Group Mode :\033[0m", "\033[31mIdle\033[0m")
+	fmt.Println("\033[37m Connections Number :\033[0m", 0)
+	fmt.Println("\033[37m Number of Messages :\033[0m", 0)
+	fmt.Println("\033[37m Action :\033[0m")
 	for {
 		Connection, err := listener.Accept()
 		if err != nil {
