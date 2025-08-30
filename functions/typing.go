@@ -6,20 +6,18 @@ import (
 )
 
 // Enables the user to write messages.
-func Sender(NewUser UserData) {
-	
-	defer CloseConnection(NewUser)
+func Sender(user UserData) {
+	defer CloseConnection(user)
 	for {
 		Now := time.Now()
 		Format := Now.Format("2006-01-02 15:04:05")
-		Tap := "[" + Format + "][" + NewUser.Name + "]:"
-		NewUser.Connection.Write([]byte(Tap))
-		n, err := NewUser.Connection.Read(NewUser.Buffer)
+		Tap := "[" + Format + "][" + user.Name + "]:"
+		user.Connection.Write([]byte(Tap))
+		n, err := user.Connection.Read(user.Buffer)
 		if err != nil {
-			
 			return
 		}
-		Message := strings.TrimSpace(string(NewUser.Buffer[:n]))
+		Message := strings.TrimSpace(string(user.Buffer[:n]))
 		if Message == "" {
 			continue
 		}
@@ -28,22 +26,22 @@ func Sender(NewUser UserData) {
 		}
 
 		Mutex.Lock()
-		History = append(History, "["+Format+"]["+NewUser.Name+"]:"+Message + "\n")
-		Server.MessageNumber = len(History)
-		Server.action = NewUser.Name + " Send a Message"
+		History = append(History, "["+Format+"]["+user.Name+"]:"+Message+"\n")
+		Server.MessagesNumber = len(History)
+		Server.action = user.Name + " Send a Message"
 		ServerDataPrint(Server)
 		Mutex.Unlock()
-		
+
 		Mutex.Lock()
-		for _, users := range User {
-			if users.Connection != NewUser.Connection {
+		for _, otherUsers := range allUser {
+			if  user.Connection != otherUsers.Connection {
 				Now := time.Now()
 				Format := Now.Format("2006-01-02 15:04:05")
-				Tap := "\n" + Format + "][" + NewUser.Name + "]:" + Message + "\n[" + Format + "][" + users.Name + "]:"
-				users.Connection.Write([]byte(Tap))
+				Tap := "\n" + Format + "][" + user.Name + "]:" + Message + "\n[" + Format + "][" + otherUsers.Name + "]:"
+				otherUsers.Connection.Write([]byte(Tap))
 			}
 		}
 		Mutex.Unlock()
-	
+
 	}
 }

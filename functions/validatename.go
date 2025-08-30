@@ -5,25 +5,24 @@ import (
 )
 
 // Validates the username and, if valid, adds the user to the list of active clients.
-func ValidateAndAddUser(NewUser UserData) bool {
-
-	if len(NewUser.Name) == 0 {
-		NewUser.Connection.Write([]byte("Empty name, Please enter at least 3 Latters.\n"))
+func ValidateAndAddUser(user UserData) bool {
+	if len(user.Name) == 0 {
+		user.Connection.Write([]byte("Empty name, Please enter at least 3 Latters.\n"))
 		return false
 	}
-	if len(NewUser.Name) >= 15 {
-		NewUser.Connection.Write([]byte("Name is too long. Please enter less than 15 Latters.\n"))
+	if len(user.Name) >= 15 {
+		user.Connection.Write([]byte("Name is too long. Please enter less than 15 Latters.\n"))
 		return false
 	}
-	if !CorrectName(NewUser.Name) {
-		NewUser.Connection.Write([]byte("Please enter at least 3 Latters.\n"))
+	if !CorrectName(user.Name) {
+		user.Connection.Write([]byte("Please enter at least 3 Latters.\n"))
 		return false
 	}
 	Mutex.Lock()
 	defer Mutex.Unlock()
-	for _, OtherUser := range User {
-		if NewUser.Name == OtherUser.Name {
-			NewUser.Connection.Write([]byte("This name already used.\n"))
+	for _, OtherUser := range allUser {
+		if user.Name == OtherUser.Name {
+			user.Connection.Write([]byte("This name already used.\n"))
 			return false
 		}
 	}
