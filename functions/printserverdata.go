@@ -12,7 +12,7 @@ func ServerDataPrint(Server ServerData) {
 		mode = "\033[33mFull\033[0m"
 	} else if Server.NumberOfConnection == 0 {
 		mode = "\033[31mIdle\033[0m"
-	} else if Server.NumberOfConnection > 0 && Server.NumberOfConnection < 3 {
+	} else if Server.NumberOfConnection > 0 && Server.NumberOfConnection < 10 {
 		mode = "\033[92mActive\033[0m"
 	}
 

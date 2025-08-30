@@ -20,8 +20,10 @@ func Sender(NewUser UserData) {
 			return
 		}
 		Message := strings.TrimSpace(string(NewUser.Buffer[:n]))
-
 		if Message == "" {
+			continue
+		}
+		if !inPrintable(Message) {
 			continue
 		}
 
